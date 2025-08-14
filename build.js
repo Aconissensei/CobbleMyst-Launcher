@@ -69,7 +69,7 @@ async buildPlatform() {
       generateUpdatesFilesForAllChannels: false,
       appId: 'com.cobblemyst.launcher',          // <- appId propre
       productName: preductname,
-      copyright: 'Copyright © 2025 CobbleMyst',
+      copyright: 'Copyright © 2025 CobbleMyst v1',
 
       // tu peux garder celui-ci, mais pour Windows tu peux vouloir un setup explicite :
       artifactName: "${productName}-${os}-${arch}.${ext}",
