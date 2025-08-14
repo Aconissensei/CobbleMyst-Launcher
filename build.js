@@ -58,64 +58,64 @@ class Index {
         }
     }
 
-    async buildPlatform() {
-        await this.Obfuscate();
-        builder.build({
-            config: {
-                generateUpdatesFilesForAllChannels: false,
-                appId: preductname,
-                productName: preductname,
-                copyright: 'Copyright © 2025 CobbleMyst',
-                artifactName: "${productName}-${os}-${arch}.${ext}",
-                extraMetadata: { main: 'app/app.js' },
-                files: ["app/**/*", "package.json", "LICENSE.md"],
-                directories: { "output": "dist" },
-                compression: 'maximum',
-                asar: true,
-                publish: [{
-                    provider: "github",
-                    releaseType: 'release',
-                }],
-                win: {
-                    icon: "./app/assets/images/icon.ico",
-                    target: [{
-                        target: "nsis",
-                        arch: "x64"
-                    }]
-                },
-                nsis: {
-                    oneClick: true,
-                    allowToChangeInstallationDirectory: false,
-                    createDesktopShortcut: true,
-                    runAfterFinish: true
-                },
-                mac: {
-                    icon: "./app/assets/images/icon.icns",
-                    category: "public.app-category.games",
-                    identity: null,
-                    target: [{
-                        target: "dmg",
-                        arch: "universal"
-                    },
-                    {
-                        target: "zip",
-                        arch: "universal"
-                    }]
-                },
-                linux: {
-                    icon: "./app/assets/images/icon.png",
-                    target: [{
-                        target: "AppImage",
-                        arch: "x64"
-                    }]
-                }
-            }
-        }).then(() => {
-            console.log('le build est terminé')
-        }).catch(err => {
-            console.error('Error during build!', err)
-        })
+async buildPlatform() {
+  await this.Obfuscate();
+
+  await builder.build({
+    // IMPORTANT : publication forcée (équivalent de --publish always)
+    publish: 'always',
+
+    config: {
+      generateUpdatesFilesForAllChannels: false,
+      appId: 'com.cobblemyst.launcher',          // <- appId propre
+      productName: preductname,
+      copyright: 'Copyright © 2025 CobbleMyst',
+
+      // tu peux garder celui-ci, mais pour Windows tu peux vouloir un setup explicite :
+      artifactName: "${productName}-${os}-${arch}.${ext}",
+
+      extraMetadata: { main: 'app/app.js' },
+      files: ["app/**/*", "package.json", "LICENSE"], // <- LICENSE (sans .md)
+      directories: { output: "dist" },
+      compression: 'maximum',
+      asar: true,
+
+      publish: [{ provider: "github", releaseType: 'release' }],
+
+      win: {
+        icon: "./app/assets/images/icon.ico",
+        target: [{ target: "nsis", arch: "x64" }]
+        // Si tu veux un nom plus parlant :
+        // artifactName: "${productName}-win-${version}-setup.${ext}"
+      },
+
+      nsis: {
+        oneClick: true,
+        allowToChangeInstallationDirectory: false,
+        createDesktopShortcut: true,
+        runAfterFinish: true
+      },
+
+      mac: {
+        icon: "./app/assets/images/icon.icns",
+        category: "public.app-category.games",
+        identity: null,
+        target: [
+          { target: "dmg", arch: "universal" },
+          { target: "zip", arch: "universal" }
+        ]
+      },
+
+      linux: {
+        icon: "./app/assets/images/icon.png",
+        target: [{ target: "AppImage", arch: "x64" }]
+      }
     }
+  })
+  .then(() => console.log('le build est terminé'))
+  .catch(err => console.error('Error during build!', err));
+}
+
 
     getFiles(path, file = []) {
         if (fs.existsSync(path)) {
